@@ -168,6 +168,7 @@ reg  [5:0]					r_newpaths_tag, n_newpaths_tag;
 reg  [5:0]					r_sender_tag, n_sender_tag;
 reg							r_add_paths, n_add_paths;
 reg  [NUM_PATHS_DW+1:0]		n_req_payload;
+reg							t_loopbreak;
 
 always @(*) begin
 	c_count_inc						=	0;
@@ -253,9 +254,10 @@ always @(*) begin
 	// Code to handle sending requests to other nodes - this gets lesser priority than accepting requests when both want to access the graph mem
 	case (r_calc_state)
 		CALC_IDLE: begin
+			t_loopbreak				=	1'b0;
 			for (i = 0; i < 64; i=i+1) begin
 				// If we've started counting, then c_init_rden can't be 1
-				if (r_node_sendreq[i] & ((~c_init_rden & ~r_start_counting) | (r_start_counting & ~num_paths_ren))) begin
+				if (~t_loopbreak & r_node_sendreq[i] & ((~c_init_rden & ~r_start_counting) | (r_start_counting & ~num_paths_ren))) begin
 					n_calc_state	=	CALC_INIT;
 					c_calc_rden		=	1'b1;
 					c_calc_raddr	=	{3'd0, i[5:0]};
@@ -264,6 +266,8 @@ always @(*) begin
 
 					num_paths_ren	=	1'b1;
 					num_paths_raddr	=	{3'd0, i[5:0]};
+
+					t_loopbreak		=	1'b1;
 				end
 			end
 		end

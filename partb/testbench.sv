@@ -61,7 +61,6 @@ module tb;
         @(negedge rst);
 		counter = 0;
 
-        //fd = $fopen("main_input.txt", "r");
         fd = $fopen("input.txt", "r");
 		if (fd == 0) begin
         	$display("ERROR: Could not open input.txt");

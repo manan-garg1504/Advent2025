@@ -13,19 +13,6 @@ module tb;
 	wire		 o_result_vld;
 	wire [31:0]	 o_result;
 
-	//logic [63:0] i_initlist_stall;
-
-    // ---------------------------------
-    // DUT
-    // ---------------------------------
-    // input_driver dut_inst(
-    //     .clk				(clk),
-    //     .rst				(rst),
-    //     .i_char				(i_char),
-    //     .i_vld				(i_vld),
-    //     .o_stall      		(o_stall),
-		// .i_initlist_stall	(i_initlist_stall)
-    // );
 	top_level dut_inst(
 		.clk				(clk         ),
 		.rst				(rst         ),
@@ -75,8 +62,7 @@ module tb;
         @(negedge rst);
 		counter = 0;
 
-        fd = $fopen("main_input.txt", "r");
-        //fd = $fopen("input.txt", "r");
+        fd = $fopen("input.txt", "r");
 		if (fd == 0) begin
         	$display("ERROR: Could not open input.txt");
 			$finish;
@@ -90,8 +76,6 @@ module tb;
             i_char		<= c[7:0];
             i_vld		<= 1'b1;
 
-			if (counter[6:0] == 0)
-				$display("here%0h", counter[15:7]);
             // Wait until DUT accepts it
 			@(posedge clk)
 			while (o_stall)
